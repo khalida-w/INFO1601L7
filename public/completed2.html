@@ -7,11 +7,11 @@
   <title>replit</title>
 
   <style>
-  * {
+    * {
       box-sizing: border-box;
     }
 
-    body{
+    body {
       display: flex;
       padding: 0;
       margin: 0;
@@ -29,14 +29,14 @@
       background-color: blue;
       display: flex;
       flex-grow: 1;
-      box-shadow: 0px 10px 5px 0px rgba(0,0,0,0.31);
+      box-shadow: 0px 10px 5px 0px rgba(0, 0, 0, 0.31);
     }
 
-    thead{
+    thead {
       border-bottom: 1px solid black;
     }
 
-    main{
+    main {
       margin-right: auto;
       margin-left: auto;
       width: 95vw;
@@ -46,55 +46,57 @@
       gap: 5px;
     }
 
-    section{
+    section {
       display: flex;
       align-items: center;
-      justify-content: space-evenly;      
+      justify-content: space-evenly;
     }
 
-
-    .card{
+    .card {
       border-radius: 2px;
       background-color: white;
       font-size: 0.7em;
       padding: 8px;
-      box-shadow: -11px 9px 5px -4px rgba(0,0,0,0.31);
+      box-shadow: -11px 9px 5px -4px rgba(0, 0, 0, 0.31);
       border: 1px solid gainsboro;
     }
 
-    button{
+    button {
       border: 1px solid grey;
       padding: 5px;
       border-radius: 5px;
     }
 
-    tr:nth-child(even){background-color: #f2f2f2;}
-
-    button:hover{
-       background-color: white;
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
     }
 
-    table{
+    button:hover {
+      background-color: white;
+    }
+
+    table {
       border-collapse: collapse;
     }
-  
-    thead, th{
+
+    thead,
+    th {
       background-color: blue;
       color: white;
       font-weight: bold;
       font-size: 1.5em;
     }
-  
+
     td {
       font-size: 1.5em;
       text-align: center;
     }
-  
+
     tr:hover {
       background-color: #ddd;
     }
-  
-    img{
+
+    img {
       height: 100px;
     }
 
@@ -103,9 +105,8 @@
       font-size: 10px;
       font-weight: bold;
     }
-
   </style>
-  
+
 </head>
 
 <body>
@@ -113,142 +114,113 @@
     Amiibo App
   </nav>
 
-<main>
-  
-  <section class="card">
-    <button onclick="filterBySeries('Animal Crossing')">
-      Animal Crossing
-    </button>
+  <main>
 
-    <button onclick="filterBySeries('Breath of the Wild')">
-      Breath of the Wild
-    </button>
+    <section class="card">
+      <button onclick="filterBySeries('Animal Crossing')">
+        Animal Crossing
+      </button>
 
-    <button onclick="filterBySeries('Super Mario')">
-      Super Mario
-    </button>
+      <button onclick="filterBySeries('Breath of the Wild')">
+        Breath of the Wild
+      </button>
 
+      <button onclick="filterBySeries('Super Mario')">
+        Super Mario
+      </button>
 
+      <input type="search" id="searchKey" placeholder="search name">
+      <button onclick=search()>Search</button>
 
-    <input type="search" id="searchKey" placeholder="search name">
-    <button onclick=search()>Search</button>
+    </section>
 
-  </section>
+    <table class="card">
+      <thead>
+        <tr>
+          <th>Name <button onclick="sortByName()">Sort</button> </th>
+          <th>Series</th>
+          <th>Image</th>
+          <th>Release</th>
+        </tr>
+      </thead>
+      <tbody id="result">
+      </tbody>
 
- <table class="card">
-   <thead>
-      <tr>
-       <th>Name <button onclick="sortByName()">Sort</button> </th>
-       <th>Series</th>
-       <th>Image</th>
-       <th>Release</th>
-     </tr>
-   </thead>
-   <tbody id="result">
-   </tbody>
+    </table>
 
- </table>
-  
-  
-</main>
-
+  </main>
 
   <script>
-
     let state = [];
     let bookmarks = [];
 
-    async function drawTable(records){
-      let html='';
+    async function drawTable(records) {
+      let html = '';
       let result = document.querySelector('#result');
-      
-      
-      for(let i=0; i<records.length; i++){
-        let rec = records[i];
-        html+=`<tr>
-         <td>${rec.character}</td>
-         <td>${rec.gameSeries}</td>
-         <td>
-           <img src="${rec.image}">
-         </td>
-         <td>
-           ${rec.release.na}
-         </td>
-       </tr>`;
-       
-      }
 
+      for (let i = 0; i < records.length; i++) {
+        let rec = records[i];
+        html += `<tr>
+          <td>${rec.character}</td>
+          <td>${rec.gameSeries}</td>
+          <td>
+            <img src="${rec.image}">
+          </td>
+          <td>
+            ${rec.release.na}
+          </td>
+        </tr>`;
+      }
       result.innerHTML = html;
-    
     }
 
- 
-
-
-
-    async function getData(){
+    async function getData() {
       const response = await fetch('https://amiiboapi.com/api/amiibo/');
       const data = await response.json();
-      return data_slice = data.amiibo.slice(0, 100);//gets first 100 items (too much data)
+      return data_slice = data.amiibo.slice(0, 100);
     }
 
-    async function showAllGames(){
-        state = await getData();
-        drawTable(state);
+    async function showAllGames() {
+      state = await getData();
+      drawTable(state);
     }
 
-    function filterBySeries(series){
-    
+    function filterBySeries(series) {
       let filtered = [];
-      
-      for(let rec of state){
+      for (let rec of state) {
         if (rec.gameSeries === series)
           filtered.push(rec);
       }
-      
       drawTable(filtered);
-    
     }
 
-    function showFavourites(){      
+    function showFavourites() {
       drawTable(bookmarks);
     }
 
-    function search(){
-      //get the search term from the input field
+    function search() {
       let searchKey = document.querySelector('#searchKey').value;
-      
       let results = [];
-    
-      //iterate all the records in the global state
-      for(let rec of state){
-    
-        //capitalize the search term and text to be case insensitive
+      for (let rec of state) {
         let searchText = rec.character.toUpperCase();
-        searchKey = searchKey.toUpperCase();
-    
-        //add to resulting array if search term is in the text
-        if ( searchText.search(searchKey) !== -1 ){
+        let key = searchKey.toUpperCase();
+        if (searchText.search(key) !== -1) {
           results.push(rec);
         }
       }
-
-      //draw table with the search results
       drawTable(results);
     }
 
-    //compares the character fields of the items in the array
-    function nameCompare(a, b){
+    function nameCompare(a, b) {
       return a.character.localeCompare(b.character);
     }
-    
-    function sortByName(){
+
+    function sortByName() {
       let result = state.sort(nameCompare);
       drawTable(result);
     }
 
-    showAllGames();    
-    
+    showAllGames();
   </script>
 </body>
 
